@@ -5,7 +5,6 @@ import com.example.taskmanagemant.dto.request.AddTaskRequestDto;
 import com.example.taskmanagemant.dto.request.UpdateTaskRequestDto;
 import com.example.taskmanagemant.dto.response.AllTaskResponseDto;
 import com.example.taskmanagemant.dto.response.TaskResponseDto;
-import com.example.taskmanagemant.entity.TaskEntity;
 import com.example.taskmanagemant.service.TaskService;
 import org.springframework.web.bind.annotation.*;
 
