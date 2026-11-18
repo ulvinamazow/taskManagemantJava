@@ -1,11 +1,15 @@
 package com.example.taskmanagemant.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -54,6 +58,88 @@ public class GlobalExceptionHandler {
         response.put("path", request.getRequestURI());
         response.put("message", ex.getMessage());
         response.put("status", 422);
+        response.put("timestamp", LocalDateTime.now());
+
+        return response;
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, Object> handleDataIntegrityViolationException(
+            DataIntegrityViolationException ex,
+            HttpServletRequest request
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("path", request.getRequestURI());
+        response.put("message", "Data integrity violation");
+        response.put("status", 409);
+        response.put("timestamp", LocalDateTime.now());
+
+        return response;
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public Map<String, Object> handleHttpMessageNotReadableException(
+            HttpMessageNotReadableException ex,
+            HttpServletRequest request
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("path", request.getRequestURI());
+        response.put("message", "Body was malformed or not readable");
+        response.put("status", 409);
+        response.put("timestamp", LocalDateTime.now());
+
+        return response;
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Object> handleMethodArgumentTypeMismatchException(
+            MethodArgumentTypeMismatchException ex,
+            HttpServletRequest request
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("path", request.getRequestURI());
+        response.put("message", ex.getMessage());
+        response.put("status", 400);
+        response.put("timestamp", LocalDateTime.now());
+
+        return response;
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, Object> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest request
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        Map<String, Object> errors =  new LinkedHashMap<>();
+        ex.getBindingResult().getFieldErrors()
+                        .forEach(error -> errors.putIfAbsent(
+                                error.getField(),
+                                error.getDefaultMessage()
+                        ));
+        response.put("path", request.getRequestURI());
+        response.put("message", "Validation error");
+        response.put("status", 400);
+        response.put("errors", errors);
+        response.put("timestamp", LocalDateTime.now());
+
+        return response;
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, Object> handleUnexpected(
+            Exception ex,
+            HttpServletRequest request
+    ) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("path", request.getRequestURI());
+        response.put("message", ex.getMessage());
+        response.put("status", 500);
         response.put("timestamp", LocalDateTime.now());
 
         return response;

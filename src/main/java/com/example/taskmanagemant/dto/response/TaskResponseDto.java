@@ -14,11 +14,11 @@ public class TaskResponseDto {
     String description;
     TaskStatus taskStatus = TaskStatus.TODO;
     TaskPriority taskPriority;
-    String taskWeight;
+    Short taskWeight;
     Boolean status = true;
     LocalDateTime createdAt = LocalDateTime.now();
 
-    public TaskResponseDto(Integer id, String title, String description, TaskStatus taskStatus, TaskPriority taskPriority, String taskWeight, LocalDateTime createdAt) {
+    public TaskResponseDto(Integer id, String title, String description, TaskStatus taskStatus, TaskPriority taskPriority, Short taskWeight, LocalDateTime createdAt) {
 
 
     }
